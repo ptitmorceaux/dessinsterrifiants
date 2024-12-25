@@ -31,8 +31,8 @@ extern exit
 %define WORD	2
 %define BYTE	1
 
-%define WIDTH	1200
-%define HEIGHT	1200
+%define WIDTH	600
+%define HEIGHT	600
 
 section .bss
 display_name:	resq	1
@@ -43,6 +43,8 @@ width:         	resd	1
 height:        	resd	1
 window:		resq	1
 gc:		resq	1
+
+my_rayon:   resw    1
 
 section .data
 
@@ -134,22 +136,28 @@ dessin:
 ;couleur du cercle 1
 mov rdi,qword[display_name]
 mov rsi,qword[gc]
-mov edx,0xFF0000	; Couleur du crayon ; rouge
+mov edx,0xFF00FF	; Couleur du crayon en hexa ; rouge
 call XSetForeground
+
+mov word[my_rayon], 50
 
 ; Dessin du cercle 1
 mov rdi,qword[display_name]
 mov rsi,qword[window]		
 mov rdx,qword[gc]			
-mov bx,400	; COORDONNEE en X DU CERCLE
-mov cx,200	; RAYON DU CERCLE
+
+mov bx, HEIGHT / 2	; COORDONNEE en Y DU CERCLE
+
+mov cx,word[my_rayon]	; RAYON DU CERCLE
 sub bx,cx
 movzx rcx,bx			
-mov bx,300	; COORDONNEE en Y DU CERCLE
-mov r15w,200	; RAYON DU CERCLE
+
+mov bx, WIDTH / 2	; COORDONNEE en X DU CERCLE
+
+mov r15w,word[my_rayon]	; RAYON DU CERCLE
 sub bx,r15w
 movzx r8,bx		
-mov r9,200	; RAYON DU CERCLE
+mov r9w,word[my_rayon]	; RAYON DU CERCLE
 shl r9,1
 mov rax,23040
 push rax
