@@ -10,33 +10,8 @@ section .data
 
 ;===============================================================
 
-section .bss
-    rand_num:   resd    1
-
-;===============================================================
-
 section .text
-global main
-
-main:
-    push rbp
-
-    mov edi, 15
-    call random_number
-    mov dword[rand_num], eax
-
-    mov rdi, nb_printf
-    mov esi, dword[rand_num]
-    mov rax, 0
-    call printf
-
-    pop rbp
-
-    mov rax, 60        
-    mov rdi, 0
-    syscall
-
-
+global random_number
 ;===============================================
 
 ; Utilité:
