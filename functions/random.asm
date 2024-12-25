@@ -5,12 +5,13 @@ extern printf, scanf, rand, srand, time
 ;===============================================================
 
 section .data
-    testmsg:        db  "Nombre = %d", 10, 0
+    nb_printf:      db  "Nombre = %d", 10, 0
     random_errmsg:  db  "non", 10, 0
 
 ;===============================================================
 
 section .bss
+    rand_num:   resd    1
 
 ;===============================================================
 
@@ -20,31 +21,12 @@ global main
 main:
     push rbp
 
-    ; mov rdi, 15
-    ; call random_number
-    ; mov rax, rdi
+    mov edi, 15
+    call random_number
+    mov dword[rand_num], eax
 
-    ; mov rdi, testmsg
-    ; mov rsi, 
-    ; mov rax, 0
-    ; call printf
-
-    mov ecx, 15    ; on save le max (temporaire) dans ebx
-    push rcx
-    mov rdi, 0
-    call time   ; return les secondes depuis le 01/01/1970 dans rax
-    mov rdi, rax
-    call srand
-    call rand   ; mov dans eax un nombre pseudo aleatoire
-    ; Calculer rand() % (MAX + 1) -> return un nb entre 0 et MAX
-    pop rcx
-    inc ecx ; (MAX + 1)
-    xor edx, edx    ; réinitialise de maniere efficace edx à 0
-    div ecx ; le reste est return dans edx
-    mov eax, edx
-
-    mov edi, testmsg
-    mov esi, eax    ; Le reste (rand % (x + 1)) est maintenant dans edx
+    mov rdi, nb_printf
+    mov esi, dword[rand_num]
     mov rax, 0
     call printf
 
@@ -63,37 +45,54 @@ main:
 ; Entrée:
 ;   - rdi -> [nombre max]
 
-; random_number:
+; Renvoie:
+;   - eax -> nb aleatoire en 0 et MAX et 0 si (edi <= 0)
+
+random_number:
+    push rbp
+    mov rbp, rsp 
     
-;     cmp edi, 0
-;     jle non
+    cmp edi, 0
+    jle random_number__error
     
-;     mov rbx, rdi    ; on save le max dans rbx
+    mov ecx, edi    ; on save le max (temporaire) dans ecx
+    push rcx
+    
+    mov rdi, 0
+    call time   ; return les secondes depuis le 01/01/1970 dans rax
+    mov ecx, eax
+    
+    ; PID dans RAX
+    mov rax, 39 ; getpid syscall number
+    syscall
+    
+    mul ecx   ; eax = partie inferieur de : ecx (time) * PID (ancien eax)
 
-;     call time
-;     mov rdi, rax
-;     call srand
+    mov edi, eax
+    call srand
+    call rand   ; mov dans eax un nombre pseudo aleatoire
+    
+    ; Calculer rand() % (MAX + 1) -> return un nb entre 0 et MAX
+    pop rcx
+    inc ecx ; (MAX + 1)
+    xor edx, edx    ; réinitialise de maniere efficace edx à 0
+    mov rdx, 0
+    div ecx ; le reste est return dans edx
 
-;     call rand
-;     ; Calculer rand() % (x + 1)
-;     mov eax, edx
-;     add eax, 1
-;     mov ebx, eax
-;     call rand
-;     xor edx, edx
-;     div ebx
+    ; On met le nb aleatoire dans eax
+    mov eax, edx
 
-;     mov [random_number], edx  ; Le reste (rand % (x + 1)) est maintenant dans edx
+    jmp fin
 
-;     jmp fin
+    random_number__error:
+    mov rdi, random_errmsg
+    mov rax, 0
+    call printf
+    mov eax, 0  ; on renvoie 0 en cas d'erreur
 
-;     non:
-;     mov rdi, random_errmsg
-;     mov rax, 0
-;     call printf
-
-;     fin:
-;     mov rsp, rbp
-;     pop rbp
+    fin:
+    mov rsp, rbp
+    pop rbp
+    ret
 
 ;===============================================================
