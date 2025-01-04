@@ -13,6 +13,8 @@ FUNCTIONS_OBJECTS := $(FUNCTIONS_SOURCES:.asm=.o)
 
 # Règle principale : compiler toutes les étapes
 all: etape1 etape2 etape3 etape4 etape5
+	clear && \
+	echo "Les exécutables des étapes sont dans $(OUTPUT_DIR)/"
 
 # Fonction pour assembler un fichier et ses dépendances
 assemble: 
