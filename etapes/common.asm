@@ -17,9 +17,6 @@ extern XDrawArc
 extern printf
 extern exit
 
-; my external functions from ./functions/
-extern random_number
-
 %define	StructureNotifyMask	131072
 %define KeyPressMask		1
 %define ButtonPressMask		4
