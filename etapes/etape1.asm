@@ -2,7 +2,15 @@
 ;###########       Etape 1       ##################
 ;##################################################
 
+; my external functions from ./functions/
+extern random_number
+extern draw_circle
+
+;##################################################
+
 %include "etapes/common.asm"
+
+;##################################################
 
 section .bss
     display_name:	resq	1
@@ -16,9 +24,12 @@ section .bss
 
     my_rayon:   resw    1
 
+;##################################################
+
 section .data
     event:		times	24 dq 0
 
+;##################################################
 
 section .text
 	
