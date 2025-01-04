@@ -1,54 +1,23 @@
-; external functions from X11 library
-extern XOpenDisplay
-extern XDisplayName
-extern XCloseDisplay
-extern XCreateSimpleWindow
-extern XMapWindow
-extern XRootWindow
-extern XSelectInput
-extern XFlush
-extern XCreateGC
-extern XSetForeground
-extern XDrawLine
-extern XNextEvent
-extern XDrawArc
+;##################################################
+;###########       Etape 1       ##################
+;##################################################
 
-; external functions from stdio library (ld-linux-x86-64.so.2)    
-extern printf
-extern exit
-
-%define	StructureNotifyMask	131072
-%define KeyPressMask		1
-%define ButtonPressMask		4
-%define MapNotify		19
-%define KeyPress		2
-%define ButtonPress		4
-%define Expose			12
-%define ConfigureNotify		22
-%define CreateNotify 16
-%define QWORD	8
-%define DWORD	4
-%define WORD	2
-%define BYTE	1
-
-%define WIDTH	600
-%define HEIGHT	600
+%include "etapes/common.asm"
 
 section .bss
-display_name:	resq	1
-screen:			resd	1
-depth:         	resd	1
-connection:    	resd	1
-width:         	resd	1
-height:        	resd	1
-window:		resq	1
-gc:		resq	1
+    display_name:	resq	1
+    screen:			resd	1
+    depth:         	resd	1
+    connection:    	resd	1
+    width:         	resd	1
+    height:        	resd	1
+    window:		resq	1
+    gc:		resq	1
 
-my_rayon:   resw    1
+    my_rayon:   resw    1
 
 section .data
-
-event:		times	24 dq 0
+    event:		times	24 dq 0
 
 
 section .text
