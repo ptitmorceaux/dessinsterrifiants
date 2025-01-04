@@ -1,5 +1,26 @@
 ;===============================================================
 
+                    ; Fonction random_number ;
+
+;===============================================================
+
+    ; Utilité :
+
+;   - Renvoyer un nombre entier positif entre 0 et [nombre max] avec [nombre max] un entier > 0
+
+;===============================================
+
+    ; Prend en entrée 1 argument :
+
+;   - rdi -> [nombre max]
+
+;===============================================
+
+; Renvoie:
+;   - eax -> nb aleatoire en 0 et MAX et 0 si (edi <= 0)
+
+;===============================================================
+
 extern printf, scanf, rand, srand, time
 
 ;===============================================================
@@ -12,20 +33,10 @@ section .data
 
 section .text
 global random_number
-;===============================================
-
-; Utilité:
-;   - Renvoyer un nombre entier positif entre 0 et [nombre max] ou [nombre max] est un entier > 0
-
-; Entrée:
-;   - rdi -> [nombre max]
-
-; Renvoie:
-;   - eax -> nb aleatoire en 0 et MAX et 0 si (edi <= 0)
-
 random_number:
+    ; Début de la fonction
     push rbp
-    mov rbp, rsp 
+    mov rbp, rsp
     
     cmp edi, 0
     jle random_number__error
@@ -65,6 +76,7 @@ random_number:
     call printf
     mov eax, 0  ; on renvoie 0 en cas d'erreur
 
+    ; Fin de la fonction
     fin:
     mov rsp, rbp
     pop rbp
