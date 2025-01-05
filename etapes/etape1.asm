@@ -19,15 +19,19 @@ section .bss
     connection:    	resd	1
     width:         	resd	1
     height:        	resd	1
-    window:		resq	1
-    gc:		resq	1
+    window:         resq	1
+    gc:             resq	1
 
-    my_rayon:   resw    1
+    i:              resb    1
+    circle_rxy:     resd    3   ; { r , x , y }
+    seed:           resd    1
 
 ;##################################################
 
 section .data
     event:		times	24 dq 0
+
+    int_msg:    db    "%d : %d", 10, 10, 0
 
 ;##################################################
 
@@ -42,8 +46,26 @@ main:
 ; Mettez ici votre code qui devra s'exécuter avant le dessin
 ;###########################################################
 
+mov byte[i], 0
+mov dword[seed], 0
+boucle_rand:
+    mov edi, WIDTH / 2  ; Maximum
+    mov esi, dword[seed]
+    call random_number  ; Résultat return dans eax et la prochaine seed dans edx
+    mov dword[seed], edx
+    
+    mov rbx, circle_rxy
+    movzx rcx, byte[i]
+    mov dword[rbx + DWORD * rcx], eax
 
-
+    mov rdi, int_msg
+    movzx esi, byte[i]
+    mov edx, dword[circle_rxy + DWORD * rcx]
+    mov rax, 0
+    call printf
+inc byte[i]
+cmp byte[i], 3  ; max d'iterations (3 : r, x, y)
+jne boucle_rand
 
 
 ;###############################
@@ -113,37 +135,14 @@ je closeDisplay						; on saute au label 'closeDisplay' qui ferme la fenêtre
 ;#########################################
 dessin:
 
-;couleur du cercle 1
-mov rdi,qword[display_name]
-mov rsi,qword[gc]
-mov edx,0xFF00FF	; Couleur du crayon en hexa ; rouge
-call XSetForeground
-
-mov word[my_rayon], 50
-
-; Dessin du cercle 1
-mov rdi,qword[display_name]
-mov rsi,qword[window]		
-mov rdx,qword[gc]			
-
-mov bx, HEIGHT / 2	; COORDONNEE en Y DU CERCLE
-
-mov cx,word[my_rayon]	; RAYON DU CERCLE
-sub bx,cx
-movzx rcx,bx			
-
-mov bx, WIDTH / 2	; COORDONNEE en X DU CERCLE
-
-mov r15w,word[my_rayon]	; RAYON DU CERCLE
-sub bx,r15w
-movzx r8,bx		
-mov r9w,word[my_rayon]	; RAYON DU CERCLE
-shl r9,1
-mov rax,23040
-push rax
-push 0
-push r9
-call XDrawArc
+mov rdi, qword[display_name]
+mov rsi, qword[window]
+mov rdx, qword[gc]
+mov ecx, dword[circle_rxy + DWORD * 0]  ; RAYON du CERCLE (dword)
+mov r8d, dword[circle_rxy + DWORD * 1]  ; COORDONNEE en X DU CERCLE (dword)
+mov r9d, dword[circle_rxy + DWORD * 2]  ; COORDONNEE en Y DU CERCLE (dword)
+push 0x00FF00   ; COULEUR du crayon en hexa (dword mais en vrai -> 3 octets : 0xRRGGBB)
+call draw_circle
 
 ; ############################
 ; # FIN DE LA ZONE DE DESSIN #
@@ -163,4 +162,3 @@ closeDisplay:
     call    XCloseDisplay
     xor	    rdi,rdi
     call    exit
-	
