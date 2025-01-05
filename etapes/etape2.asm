@@ -2,7 +2,15 @@
 ;###########       Etape 2       ##################
 ;##################################################
 
+; my external functions from ./functions/
+extern random_number
+extern draw_circle
+
+;##################################################
+
 %include "etapes/common.asm"
+
+;##################################################
 
 section .bss
     display_name:	resq	1
@@ -11,14 +19,17 @@ section .bss
     connection:    	resd	1
     width:         	resd	1
     height:        	resd	1
-    window:		resq	1
-    gc:		resq	1
+    window:         resq	1
+    gc:             resq	1
 
     my_rayon:   resw    1
 
-section .data
-    event:		times	24 dq 0
+;##################################################
 
+section .data
+    event:		times   24  dq  0
+
+;##################################################
 
 section .text
 	
@@ -102,37 +113,15 @@ je closeDisplay						; on saute au label 'closeDisplay' qui ferme la fenêtre
 ;#########################################
 dessin:
 
-;couleur du cercle 1
-mov rdi,qword[display_name]
-mov rsi,qword[gc]
-mov edx,0xFF00FF	; Couleur du crayon en hexa ; rouge
-call XSetForeground
-
-mov word[my_rayon], 50
-
 ; Dessin du cercle 1
-mov rdi,qword[display_name]
-mov rsi,qword[window]		
-mov rdx,qword[gc]			
-
-mov bx, HEIGHT / 2	; COORDONNEE en Y DU CERCLE
-
-mov cx,word[my_rayon]	; RAYON DU CERCLE
-sub bx,cx
-movzx rcx,bx			
-
-mov bx, WIDTH / 2	; COORDONNEE en X DU CERCLE
-
-mov r15w,word[my_rayon]	; RAYON DU CERCLE
-sub bx,r15w
-movzx r8,bx		
-mov r9w,word[my_rayon]	; RAYON DU CERCLE
-shl r9,1
-mov rax,23040
-push rax
-push 0
-push r9
-call XDrawArc
+mov rdi, qword[display_name]
+mov rsi, qword[window]
+mov rdx, qword[gc]
+mov ecx, 50             ; RAYON du CERCLE (dword)
+mov r8d, WIDTH / 2    ; COORDONNEE en X DU CERCLE (dword)
+mov r9d, HEIGHT / 4   ; COORDONNEE en Y DU CERCLE (dword)
+push 0x00FF00           ; COULEUR du crayon en hexa (dword mais en vrai -> 3 octets : 0xRRGGBB)
+call draw_circle
 
 ; ############################
 ; # FIN DE LA ZONE DE DESSIN #
