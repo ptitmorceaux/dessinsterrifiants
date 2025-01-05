@@ -92,7 +92,7 @@ mov rdx,10
 mov rcx,10
 mov r8,WIDTH	; largeur
 mov r9,HEIGHT	; hauteur
-push 0xFFFFFF	; background  0xRRGGBB
+push 0x000000	; background  0xRRGGBB
 push 0x00FF00
 push 1
 call XCreateSimpleWindow
@@ -141,7 +141,7 @@ mov rdx, qword[gc]
 mov ecx, dword[circle_rxy + DWORD * 0]  ; RAYON du CERCLE (dword)
 mov r8d, dword[circle_rxy + DWORD * 1]  ; COORDONNEE en X DU CERCLE (dword)
 mov r9d, dword[circle_rxy + DWORD * 2]  ; COORDONNEE en Y DU CERCLE (dword)
-push 0x00FF00   ; COULEUR du crayon en hexa (dword mais en vrai -> 3 octets : 0xRRGGBB)
+push 0xFFFFFF   ; COULEUR du crayon en hexa (dword mais en vrai -> 3 octets : 0xRRGGBB)
 call draw_circle
 
 ; ############################
