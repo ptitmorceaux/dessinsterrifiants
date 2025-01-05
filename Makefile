@@ -24,10 +24,12 @@ assemble:
 	fi
 	
 	@if [ -f $(ETAPES_DIR)/$(file).asm ]; then \
-		@echo "Assemblage de $(ETAPES_DIR)/$(file).asm"; \
+		echo "Assemblage de $(ETAPES_DIR)/$(file).asm"; \
+		set -e; \
 		nasm $(NASM_FLAGS) $(ETAPES_DIR)/$(file).asm -o $(ETAPES_DIR)/$(file).o; \
 		for func in $(FUNCTIONS_SOURCES); do \
 			echo "Assemblage de $$func"; \
+			set -e; \
 			nasm $(NASM_FLAGS) $$func -o $(FUNCTIONS_DIR)/$$(basename $$func .asm).o; \
 		done; \
 	else \
