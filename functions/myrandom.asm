@@ -12,12 +12,20 @@
 
     ; Prend en entrée 1 argument :
 
-;   - rdi -> [nombre max]
+;   - edi -> [nombre max]
 
 ;===============================================
 
-; Renvoie:
+    ; Renvoie:
+
 ;   - eax -> nb aleatoire en 0 et MAX et 0 si (edi <= 0)
+
+;===============================================
+
+    ; Exemple d'appel :
+
+; mov edi, 15
+; call random_number
 
 ;===============================================================
 
