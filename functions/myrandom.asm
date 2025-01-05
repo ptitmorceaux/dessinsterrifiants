@@ -26,7 +26,8 @@
 
     ; Exemple d'appel :
 
-; mov edi, 15
+; mov edi, 500
+; mov esi, 0
 ; call random_number
 
 ;===============================================================
