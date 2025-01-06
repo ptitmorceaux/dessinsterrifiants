@@ -23,8 +23,8 @@ section .bss
     gc:             resq	1
 
     i:              resb    1
-    circle_rxy:     resd    3   ; { r , x , y }
-    seed:           resd    1
+    circle_rxy:     resd    3   ; 10 cercles * { r , x , y }
+    rand_seed:           resd    1
 
 ;##################################################
 
@@ -46,13 +46,14 @@ main:
 ; Mettez ici votre code qui devra s'exécuter avant le dessin
 ;###########################################################
 
+mov dword[rand_seed], 0
+
 mov byte[i], 0
-mov dword[seed], 0
 boucle_rand:
     mov edi, WIDTH - 100  ; Maximum
-    mov esi, dword[seed]
+    mov esi, dword[rand_seed]
     call random_number    ; Résultat return dans eax et la prochaine seed dans edx
-    mov dword[seed], edx
+    mov dword[rand_seed], edx
     
     mov rbx, circle_rxy
     movzx rcx, byte[i]
