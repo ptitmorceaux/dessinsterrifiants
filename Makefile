@@ -1,6 +1,6 @@
 # Variables
 NASM_FLAGS=-felf64 -Fdwarf -g
-GCC_FLAGS=-fPIC -fno-pie -no-pie -z noexecstack --for-linker /lib64/ld-linux-x86-64.so.2 -lX11
+GCC_FLAGS=-lm -fPIC -fno-pie -no-pie -z noexecstack --for-linker /lib64/ld-linux-x86-64.so.2 -lX11
 
 # Dossier des étapes et des fonctions
 ETAPES_DIR=etapes
