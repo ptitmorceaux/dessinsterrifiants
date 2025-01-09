@@ -6,40 +6,30 @@
 
     ; Utilité :
 
-;   - Renvoyer un nombre entier positif entre 0 et [nombre max] avec [nombre max] un entier > 0 à partir d'une seed donnée [seed]
+;   - Renvoyer un nombre entier positif entre 0 et [nombre max] avec [nombre max] un entier > 0
 
 ;===============================================
 
-    ; Prend en entrée 2 arguments :
+    ; Prend en entrée 1 argument :
 
-;   - edi -> [nombre max]
-;   - esi -> [seed]         ; Si = 0 : la seed est generée a partir de time
+;   - di -> [nombre max]
 
 ;===============================================
 
     ; Renvoie:
 
-;   - eax -> nb aleatoire en 0 et MAX et 0 si (edi <= 0)
-;   - edx -> le nombre pseudo aleatoire généré par la seed
+;   - eax -> nb aleatoire en 0 et MAX et 0 si di <= 0
 
 ;===============================================
 
     ; Exemple d'appel :
 
-; mov edi, 500
-; mov esi, 0
+; mov di, 500  ; max random num
 ; call random_number
 
 ;===============================================================
 
 extern printf, scanf, rand, srand, time
-
-;===============================================================
-
-section .bss
-    seed:       resd    1
-    max:        resd    1
-    rand_num:   resd    1
 
 ;===============================================================
 
@@ -58,47 +48,31 @@ random_number:
 
     ;=====================================
 
-    ; Maximum (esi)
+    ; Maximum (di)
 
-    cmp edi, 0
+    cmp di, 0
     jle random_number__error
-
-    ; On save le maximum indiqué
-    mov dword[max], edi
 
     ;=====================================
 
-    ; Génération d'une graine si besoin (edi)
-
-    cmp esi, 0
-    jne seed_fixed
-
-    mov rdi, 0
-    call time   ; return les secondes depuis le 01/01/1970 dans rax
-    mov rsi, rax
-    
-    seed_fixed:
-    
-    mov edi, esi
-    call srand
-    call rand   ; return dans eax un nombre pseudo aleatoire
-
-    ; On save le nombre pseudo aleatoire
-    mov dword[rand_num], eax
+    ; Génération d'un nombre aléatoire dans le registre rax
+    rdrand_generate:
+        rdrand rax
+        jc rdrand_success
+        jmp rdrand_generate
+    rdrand_success:
 
     ;=====================================
 
     ; Calculer rand() % (MAX + 1) -> return un nb entre 0 et MAX
-    mov eax, dword[rand_num]    ; Charger rand_num dans eax
-    mov ebx, dword[max]         ; Charger MAX dans ebx
-    inc ebx                     ; Incrementer eax pour obtenir (MAX + 1)
-    xor edx, edx                ; Réinitialiser edx à 0 avant la division
-    div ebx         ; Diviser eax (le nombre aléatoire) par (MAX + 1), résultat dans eax, reste dans edx
+    inc rdi         ; Incrementer rdi pour obtenir (MAX + 1)
+    xor rdx, rdx    ; Réinitialiser rdx à 0 avant la division
+    div rdi         ; Diviser rax (le nombre aléatoire) par rdi (MAX + 1), résultat dans rax, reste dans rdx
 
     ; On met le nb aleatoire dans eax
-    mov eax, edx
+    movzx rax, dx
 
-    jmp pseudo_alea
+    jmp fin
 
     ;=====================================
 
@@ -106,17 +80,11 @@ random_number:
     mov rdi, random_errmsg
     mov rax, 0
     call printf
-    mov eax, 0  ; on renvoie 0 en cas d'erreur
+    mov rax, 0  ; on renvoie 0 en cas d'erreur
 
     ;=====================================
 
-    ; On return le nombre pseudo aleatoire généré par la seed dans edx
-
-    pseudo_alea:
-
-    mov edx, dword[rand_num]
-
-    ;=====================================
+    fin:
 
     ; Fin de la fonction
     mov rsp, rbp
