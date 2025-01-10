@@ -15,6 +15,7 @@ extern XDrawArc
 
 ; external functions from stdio library (ld-linux-x86-64.so.2)    
 extern printf
+extern scanf
 extern exit
 
 %define	StructureNotifyMask	131072
@@ -31,5 +32,5 @@ extern exit
 %define WORD	2
 %define BYTE	1
 
-%define WIDTH	600
-%define HEIGHT	600
+%define WIDTH	1000
+%define HEIGHT	1000
