@@ -110,10 +110,10 @@ boucle_cercle:
         mul r8      ; r8 *= rax
         mov r8, rax ; r8 = j * COLUMN_CIRCLES
 
-        movzx rdi, word[circles_rxy + WORD * (r8 + 1)]      ; x1 -> cercle[j][1]
-        movzx rsi, word[circles_rxy + WORD * (r8 + 2)]      ; y1 -> cercle[j][2]
-        movzx rdx, word[tmp_circle_rxy + WORD * (1)]  ; x2 -> tmp[1]
-        movzx rcx, word[tmp_circle_rxy + WORD * (2)]  ; y2 -> tmp[2]
+        movzx rdi, word[circles_rxy + WORD * (r8 + 1)]  ; x1 -> cercle[j][1]
+        movzx rsi, word[circles_rxy + WORD * (r8 + 2)]  ; y1 -> cercle[j][2]
+        movzx rdx, word[tmp_circle_rxy + WORD * (1)]    ; x2 -> tmp[1]
+        movzx rcx, word[tmp_circle_rxy + WORD * (2)]    ; y2 -> tmp[2]
         call distance_points
         ; rax = la ditance entre les deux points
 
@@ -121,7 +121,7 @@ boucle_cercle:
         movzx rdx, word[tmp_circle_rxy]             ; tmp_cercle[0]
         movzx rsi, word[circles_rxy + WORD * (r8)]  ; cercles[j][0]
         add rdx, rsi
-        ; rdx = somme des rayons = rayon_tmp + rayon_cerlce[j]
+        ; rdx = (somme des rayons) = (rayon_tmp + rayon_cerlce[j])
 
         ; Si distance <= sum(rayons):
         cmp rax, rdx
@@ -144,9 +144,9 @@ boucle_cercle:
     mov byte[j], 0 
     boucle_init_cercle:
 
-        movzx r8, byte[j]       ; r8  = j
-        mov rax, rbx            ; rax = COLUMN_CIRCLES * i
-        add rax, r8             ; rax = j + COLUMN_CIRCLES * i
+        movzx r8, byte[j]   ; r8  = j
+        mov rax, rbx        ; rax = COLUMN_CIRCLES * i
+        add rax, r8         ; rax = j + COLUMN_CIRCLES * i
 
         mov cx, word[tmp_circle_rxy + WORD * (r8)]
 
