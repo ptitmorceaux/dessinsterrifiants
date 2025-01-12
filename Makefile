@@ -75,12 +75,16 @@ etape5: $(ETAPES_DIR)/etape5.asm $(FUNCTIONS_SOURCES)
 # Nettoyage
 clean:
 	echo "Suppression des exécutables"
-	rm -f */*.out
+	rm -f */*.out && \
+	clear && \
+	echo "Les exécutables ont été supprimés"
 
 fclean: clean
 	make clean
 	echo "Suppression des fichiers objets"
-	rm -f */*.o
+	rm -f */*.o && \
+	clear && \
+	echo "Les fichiers exécutables et objects ont été supprimés"
 
 re: clean fclean all
 
