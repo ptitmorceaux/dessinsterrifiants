@@ -11,8 +11,9 @@ extern distance_points
 
 %include "etapes/common.asm"
 
-%define NB_CERCLES 24
+%define NB_CERCLES 50
 %define COLUMN_CIRCLES 3 ; { r , x , y }
+%define MAX_RAYON (WIDTH / 2)
 
 ;##################################################
 
@@ -33,6 +34,13 @@ section .bss
 
 section .data
     event:		times	24 dq 0
+
+    msg_start:  db  "--- DEBUT ---", 10, 10, 0
+    msg_end:    db  "--- FIN ---", 10, 10, 0
+    int_msg:    db  "%d : %d // %d", 10, 10, 0
+    coord_msg:  db  "x:%d y:%d // %d", 10, 10, 0
+    msg_aled:   db  "ALED", 10, 10, 0
+    test_msg:   db  "TEST MSG : %d", 10, 0
 
 ;##################################################
 
@@ -73,7 +81,7 @@ boucle_cercle:
         cmp byte[j], 0
         jne boucle_rand__xy
 
-        mov di, WIDTH / 2   ; Maximum du rayon
+        mov di, MAX_RAYON   ; Maximum du rayon
         jmp boucle_rand_calcul
 
         boucle_rand__xy:
