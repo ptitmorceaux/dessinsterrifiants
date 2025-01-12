@@ -165,6 +165,8 @@ boucle_cercle:
 
         ;------------------------------------------
 
+        ; ETAPE 2
+
         ; On change le rayon pour etre tangent au cercle le plus proche si pas cercle init
 
         ;------------------------------------------
