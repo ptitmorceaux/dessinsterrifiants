@@ -12,7 +12,7 @@ extern distance_points
 %include "etapes/common.asm"
 
 %define NB_CERCLES 100
-%define NB_CERCLES_INIT 10
+%define NB_CERCLES_INIT 5
 
 %define COLUMN_CIRCLES 3 ; { r , x , y }
 %define MAX_RAYON (WIDTH / 2)
