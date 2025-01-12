@@ -137,8 +137,12 @@ boucle_cercle:
         call distance_points
         ; rax = la ditance entre les deux points
 
-        ;; Pour eviter de recalculer un nouveau cercle si le changement de rayon cause
-        ;; une collision avec un cercle pas encore calculer dans la boucle [j] :
+        ;------------------------------------------
+        
+        ; Pour eviter de recalculer un nouveau cercle si le changement de rayon cause
+        ; une collision avec un cercle pas encore calculer dans la boucle [j] :
+
+        ;------------------------------------------
         
         ; On verifie un cercle init la somme est de : tmp[0] + cercles[j][0]
         cmp byte[i], NB_CERCLES_INIT
@@ -161,11 +165,11 @@ boucle_cercle:
 
         ;------------------------------------------
 
-        ; On change le rayon pour etre tangent au cercle le plus proche
+        ; On change le rayon pour etre tangent au cercle le plus proche si pas cercle init
 
         ;------------------------------------------
 
-        ; ; Si il s'agit d'un cercle init on ne change pas son rayon
+        ; Si il s'agit d'un cercle init on ne change pas son rayon
         cmp byte[i], NB_CERCLES_INIT
         jb init_ou_pas_proche
 
