@@ -335,6 +335,8 @@ boucle_dessin:
     dessiner_cercle:
     call draw_circle
 
+    pop rdi ; Pour nettoyer la pile (-> 0xFFFFFF ou 0xFF0000)
+
 inc byte[i]
 cmp byte[i], NB_CERCLES
 jne boucle_dessin
