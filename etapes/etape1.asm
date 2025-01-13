@@ -11,7 +11,7 @@ extern distance_points
 
 %include "etapes/common.asm"
 
-%define NB_CERCLES 50
+%define NB_CERCLES 300
 %define COLUMN_CIRCLES 3 ; { r , x , y }
 %define MAX_RAYON (WIDTH / 2)
 
@@ -25,8 +25,8 @@ section .bss
     window:         resq	1
     gc:             resq	1
 
-    i:              resb    1
-    j:              resb    1
+    i:              resw    1
+    j:              resw    1
     circles_rxy:    resw    NB_CERCLES * COLUMN_CIRCLES   ; nb de cercles * { r , x , y }
     tmp_circle_rxy: resw    COLUMN_CIRCLES
 
@@ -55,11 +55,11 @@ main:
 ; Mettez ici votre code qui devra s'exécuter avant le dessin
 ;###########################################################
 
-mov byte[i], 0
+mov word[i], 0
 boucle_cercle:
 
     ; mul utilise rdx:rax
-    movzx rax, byte[i]
+    movzx rax, word[i]
     mov rbx, COLUMN_CIRCLES
     mul rbx
     ; rax = i * COLUMN_CIRCLES
@@ -74,11 +74,11 @@ boucle_cercle:
 
     cercle_est_en_collision:
 
-    mov byte[j], 0
+    mov word[j], 0
     boucle_random:
 
         ; Si on défini le rayon -> tmp[0] : le max est different de x et y
-        cmp byte[j], 0
+        cmp word[j], 0
         jne boucle_rand__xy
 
         mov di, MAX_RAYON   ; Maximum du rayon
@@ -91,12 +91,12 @@ boucle_cercle:
         call random_number
         ; ax = random_number
 
-        movzx rcx, byte[j] ; rcx = j
+        movzx rcx, word[j] ; rcx = j
 
         mov word[tmp_circle_rxy + WORD * (rcx)], ax ; tmp[j] (word)
 
-    inc byte[j]
-    cmp byte[j], COLUMN_CIRCLES
+    inc word[j]
+    cmp word[j], COLUMN_CIRCLES
     jne boucle_random
 
     ;=====================================
@@ -107,13 +107,13 @@ boucle_cercle:
     ;=====================================
 
     ; Si on est au premier cercle dessiner, on ne regarde pas
-    cmp byte[i], 0
+    cmp word[i], 0
     je fin_boucle_collision
 
-    mov byte[j], 0
+    mov word[j], 0
     boucle_collision:
 
-        movzx r8, byte[j]
+        movzx r8, word[j]
         mov rax, COLUMN_CIRCLES
         mul r8      ; r8 *= rax
         mov r8, rax ; r8 = j * COLUMN_CIRCLES
@@ -135,10 +135,10 @@ boucle_cercle:
         cmp rax, rdx
         jbe cercle_est_en_collision
     
-    inc byte[j]
+    inc word[j]
     ; Si j == i alors on a déjà parcouru tout les cercles exsitants, on arrete la boucle
-    mov al, byte[i]
-    cmp byte[j], al
+    mov ax, word[i]
+    cmp word[j], ax
     jne boucle_collision
     
     fin_boucle_collision:
@@ -149,10 +149,10 @@ boucle_cercle:
 
     ;=====================================
 
-    mov byte[j], 0 
+    mov word[j], 0 
     boucle_init_cercle:
 
-        movzx r8, byte[j]   ; r8  = j
+        movzx r8, word[j]   ; r8  = j
         mov rax, rbx        ; rax = COLUMN_CIRCLES * i
         add rax, r8         ; rax = j + COLUMN_CIRCLES * i
 
@@ -160,14 +160,14 @@ boucle_cercle:
 
         mov word[circles_rxy + WORD * (rax)], cx  ; circles_rxy[i][j] (word)
     
-    inc byte[j]
-    cmp byte[j], COLUMN_CIRCLES
+    inc word[j]
+    cmp word[j], COLUMN_CIRCLES
     jne boucle_init_cercle
 
     ;=====================================
 
-inc byte[i]
-cmp byte[i], NB_CERCLES
+inc word[i]
+cmp word[i], NB_CERCLES
 jne boucle_cercle
 
 
@@ -239,11 +239,11 @@ je closeDisplay						; on saute au label 'closeDisplay' qui ferme la fenêtre
 
 dessin:
 
-mov byte[i], 0
+mov word[i], 0
 boucle_dessin:
 
     ; mul utilise rdx:rax
-    movzx rax, byte[i]
+    movzx rax, word[i]
     mov rbx, COLUMN_CIRCLES
     mul rbx
     ; rax = i * COLUMN_CIRCLES
@@ -262,8 +262,8 @@ boucle_dessin:
 
     pop rdi ; Pour nettoyer la pile (-> 0xFFFFFF)
 
-inc byte[i]
-cmp byte[i], NB_CERCLES
+inc word[i]
+cmp word[i], NB_CERCLES
 jne boucle_dessin
 
 
