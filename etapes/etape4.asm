@@ -40,7 +40,7 @@ section .bss
 section .data
     event:		times	24 dq 0
 
-    palette:    dd  0xb8ff61, 0xb9e458, 0xbaca4f, 0xbbaf46, 0xbc943d, 0xbe7a33, 0xbf5f2a, 0xc04421, 0xc12a18, 0xc20f0f
+    palette:    dd  0xcbf499, 0xb4d988, 0x9ebe77, 0x87a366, 0x718855, 0x5a6c44, 0x445133, 0x2d3622, 0x171b11, 0x000000
 
     ; msg_start:  db  "--- DEBUT ---", 10, 10, 0
     ; msg_end:    db  "--- FIN ---", 10, 10, 0
@@ -323,10 +323,13 @@ boucle_dessin:
     mov cx,  word[circles_rxy + WORD * (rax + 0)]   ; circles_rxy[i][0] : RAYON du CERCLE (word)
     mov word[j], 0
 
+    mov dl, 0 ; BOOL inc (0) OR dec (1)
+
     boucle_cercle_concentrique:
         
         push rcx ; on save le rayon
         push rax ; on save (i * COLUMN_CIRCLES)
+        push rdx ; on save BOOL inc (0) OR dec (1)
 
         mov rdi, qword[display_name]
         mov rsi, qword[window]
@@ -340,21 +343,42 @@ boucle_dessin:
         push rbx     ; mettre la couleur du tableau
         call draw_circle
 
-        pop rcx     ; enlever 0xFF0000
-        pop rax     ; recupere (i * COLUMN_CIRCLES)
-        pop rcx     ; recupere le rayon cx
+        pop rcx ; enlever 0xFF0000 (on veut juste vider le haut de la pile)
+        pop rdx ; recupere BOOL inc (0) OR dec (1)
+        pop rax ; recupere (i * COLUMN_CIRCLES)
+        pop rcx ; recupere le rayon cx
 
-        palette_inc:
+        ;========================================================
+
+        ;                 BONUS : Vrai Dégradé
+
+        ;========================================================
+
+        ; Si dl = 1 alors on decremente sinon on incremente
+        ; Permet de creer un effet de degradé mium mium
+        cmp dl, 1
+        je palette_dec
+
+        ; palette inc
+        ; Si on a pas atteint le max LEN_PALETTE alors on continue a inc (dl = 0)
+        ; Sinon : dl = 1 (on dec)
         inc word[j]
         cmp word[j], LEN_PALETTE
-        jb len_palette_unreached
+        jb fin_palette_dec_inc
+        mov dl, 1
+        dec word[j] ; Pour ne pas dessiner (LEN_PALETTE - 1) 2 fois d'affilées
         
         palette_dec:
+        ; Si on atteint PAS le min 0 alors on continue a dec (dl = 1)
+        ; Sinon : dl = 0 (on inc)
         dec word[j]
         cmp word[j], 0
-        jae palette_inc
+        ja fin_palette_dec_inc
+        mov dl, 0
         
-        len_palette_unreached:
+        fin_palette_dec_inc:
+
+        ;========================================================
     
     sub cx, PALETTE_SUB
     cmp cx, 0
