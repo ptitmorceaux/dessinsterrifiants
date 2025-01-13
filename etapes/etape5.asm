@@ -398,11 +398,13 @@ boucle_dessin:
         pop rax     ; recupere (i * COLUMN_CIRCLES)
         pop rcx     ; recupere le rayon cx
 
+        ;-------------------------
         inc word[j]
         cmp word[j], LEN_PALETTE
         jb len_palette_unreached
         mov word[j], 0
         len_palette_unreached:
+        ;-------------------------
     
     sub cx, PALETTE_SUB
     cmp cx, 0
