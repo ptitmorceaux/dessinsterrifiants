@@ -11,8 +11,9 @@ extern distance_points
 
 %include "etapes/common.asm"
 
-%define NB_CERCLES 2
+%define NB_CERCLES 50
 %define COLUMN_CIRCLES 3 ; { r , x , y }
+%define MAX_RAYON (WIDTH / 2)
 
 ;##################################################
 
@@ -21,8 +22,6 @@ section .bss
     screen:			resd	1
     depth:         	resd	1
     connection:    	resd	1
-    width:         	resd	1
-    height:        	resd	1
     window:         resq	1
     gc:             resq	1
 
@@ -30,8 +29,6 @@ section .bss
     j:              resb    1
     circles_rxy:    resw    NB_CERCLES * COLUMN_CIRCLES   ; nb de cercles * { r , x , y }
     tmp_circle_rxy: resw    COLUMN_CIRCLES
-
-    test:           resb    1
 
 ;##################################################
 
@@ -41,7 +38,9 @@ section .data
     msg_start:  db  "--- DEBUT ---", 10, 10, 0
     msg_end:    db  "--- FIN ---", 10, 10, 0
     int_msg:    db  "%d : %d // %d", 10, 10, 0
+    coord_msg:  db  "x:%d y:%d // %d", 10, 10, 0
     msg_aled:   db  "ALED", 10, 10, 0
+    test_msg:   db  "TEST MSG : %d", 10, 0
 
 ;##################################################
 
@@ -56,12 +55,16 @@ main:
 ; Mettez ici votre code qui devra s'exécuter avant le dessin
 ;###########################################################
 
-    mov rdi, msg_start
-    mov rax, 0
-    call printf
-
 mov byte[i], 0
-boucle_rand:
+boucle_cercle:
+
+    ; mul utilise rdx:rax
+    movzx rax, byte[i]
+    mov rbx, COLUMN_CIRCLES
+    mul rbx
+    ; rax = i * COLUMN_CIRCLES
+    mov rbx, rax
+    ; rbx = i * COLUMN_CIRCLES
 
     ;=====================================
 
@@ -69,167 +72,103 @@ boucle_rand:
 
     ;=====================================
 
-    mov byte[test], 0
+    cercle_est_en_collision:
 
     mov byte[j], 0
-    boucle_rand__tmp_cricle:
+    boucle_random:
 
-        ;///////////
-        inc byte[test]
-        ;///////////
-
+        ; Si on défini le rayon -> tmp[0] : le max est different de x et y
         cmp byte[j], 0
-        jne boucle_rand__tmp_cricle__coord
+        jne boucle_rand__xy
 
-        mov edi, WIDTH / 2  ; Maximum du rayon
-        jmp boucle_rand__tmp_cricle__calcul
+        mov di, MAX_RAYON   ; Maximum du rayon
+        jmp boucle_rand_calcul
 
-        boucle_rand__tmp_cricle__coord:
-        mov edi, WIDTH  ; Maximum pour x et y
+        boucle_rand__xy:
+        mov di, WIDTH  ; Maximum pour x et y
 
-        boucle_rand__tmp_cricle__calcul:
-        
-        call random_number  ; retrun nb aléatoire dans ax
-        mov r8w, ax  ; On save nb aleatoire dans r8w
+        boucle_rand_calcul:
+        call random_number
+        ; ax = random_number
 
-        mov rcx, tmp_circle_rxy
-        movzx rax, byte[i]
-        mov rbx, COLUMN_CIRCLES
-        mul rbx             ; rax = i * COLUMN_CIRCLES
+        movzx rcx, byte[j] ; rcx = j
 
-        movzx rbx, byte[j]
-        add rax, rbx        ; rax = i * COLUMN_CIRCLES + j
-        
-        mov word[rcx + WORD * rax], r8w   ; On stock le nb aleatoire dans tmp_circle_rxy[i][j]
+        mov word[tmp_circle_rxy + WORD * (rcx)], ax ; tmp[j] (word)
 
     inc byte[j]
-    cmp byte[j], COLUMN_CIRCLES  ; max d'iterations (3 : r, x, y)
-    jne boucle_rand__tmp_cricle
+    cmp byte[j], COLUMN_CIRCLES
+    jne boucle_random
 
-    ; =====================================
+    ;=====================================
 
     ; On vérifie si [tmp_circle_rxy] ne rentre pas en collision avec un des cercles déjà calculés
     ; Sinon on renvoie vers boucle_rand__tmp_cricle
 
-    ; =====================================
+    ;=====================================
 
-;     mov byte[j], 0
+    ; Si on est au premier cercle dessiner, on ne regarde pas
+    cmp byte[i], 0
+    je fin_boucle_collision
 
-;     cmp byte[i], 0
-;     je boucle_rand__add_cricle
+    mov byte[j], 0
+    boucle_collision:
 
-;     boucle_rand__distance:
-        
-;         ;-------------------------------------
-        
-;         movzx rax, byte[j]
-;         mov rbx, COLUMN_CIRCLES
-;         mul rbx     ; rax = j * COLUMN_CIRCLES
+        movzx r8, byte[j]
+        mov rax, COLUMN_CIRCLES
+        mul r8      ; r8 *= rax
+        mov r8, rax ; r8 = j * COLUMN_CIRCLES
 
-;         mov rbx, rax    ; rbx = j * COLUMN_CIRCLES
-        
-;         ; (rax + k) <=> (j * COLUMN_CIRCLES + k)
-;         movzx rdi, word[circles_rxy + WORD * (rbx + 1)]   ; circle[j][x]
-;         movzx rsi, word[circles_rxy + WORD * (rbx + 2)]   ; circle[j][y]
-;         movzx rdx, word[tmp_circle_rxy + WORD * 1]        ; tmp[x]
-;         movzx rcx, word[tmp_circle_rxy + WORD * 2]        ; tmp[y]
-;         call distance_points    ; rax = la distance entre les deux points
+        movzx rdi, word[circles_rxy + WORD * (r8 + 1)]  ; x1 -> cercle[j][1]
+        movzx rsi, word[circles_rxy + WORD * (r8 + 2)]  ; y1 -> cercle[j][2]
+        movzx rdx, word[tmp_circle_rxy + WORD * (1)]    ; x2 -> tmp[1]
+        movzx rcx, word[tmp_circle_rxy + WORD * (2)]    ; y2 -> tmp[2]
+        call distance_points
+        ; rax = la ditance entre les deux points
 
-;         ;-------------------------------------
-        
-;         ; Sommes des rayons des 2 cercles
-;         mov bx, word[tmp_circle_rxy]
-;         mov cx, word[circles_rxy + WORD * (rbx + 0)]
-;         add rbx, rcx    ; rbx = tmp[r] + circle[j][r]
+        ; Somme des rayons
+        movzx rdx, word[tmp_circle_rxy]             ; tmp_cercle[0]
+        movzx rsi, word[circles_rxy + WORD * (r8)]  ; cercles[j][0]
+        add rdx, rsi
+        ; rdx = (somme des rayons) = (rayon_tmp + rayon_cerlce[j])
 
-; ; ;///////////////////////////
-; ; push rax
-; ; mov rdi, int_msg
-; ; mov rsi, rbx
-; ; mov rdx, rax
-; ; movzx rcx, byte[test]
-; ; mov rax, 0
-; ; call printf
-; ; pop rax
-; ; ;///////////////////////////
-        
-;         ;-------------------------------------
-        
-;         ; Si rax (distance) > rbx (sum des rayons) alors les cercles ne se touchent pas
-;         cmp rax, rbx
-;         ja mov byte[test], 0
-
-        
-;         ; Sinon on calcul un nouveau tmp_circle
-;         mov byte[j], 0
-
-; ;///////////////////////////
-; mov rdi, int_msg
-; mov rsi, rax
-; mov rdx, rbx
-; movzx rcx, byte[i]
-; mov rax, 0
-; call printf
-
-; ; mov rdi, 0
-; ; mov rax, 60
-; ; syscall
-; ;///////////////////////////
-;         jmp boucle_rand__tmp_cricle
-
-;         boucle_rand__distance__success:
-
-;         ;-------------------------------------
-
-;     inc byte[j]
-;     ; Si j == i alors tout les cercles ont été vérifiés
-;     mov al, byte[i]
-;     cmp al, byte[j]
-;     jne boucle_rand__distance
+        ; Si distance <= sum(rayons):
+        cmp rax, rdx
+        jbe cercle_est_en_collision
+    
+    inc byte[j]
+    ; Si j == i alors on a déjà parcouru tout les cercles exsitants, on arrete la boucle
+    mov al, byte[i]
+    cmp byte[j], al
+    jne boucle_collision
+    
+    fin_boucle_collision:
 
     ;=====================================
 
     ; On ajoute le tmp_cricle dans le tableau des cercles
 
     ;=====================================
+
+    mov byte[j], 0 
+    boucle_init_cercle:
+
+        movzx r8, byte[j]   ; r8  = j
+        mov rax, rbx        ; rax = COLUMN_CIRCLES * i
+        add rax, r8         ; rax = j + COLUMN_CIRCLES * i
+
+        mov cx, word[tmp_circle_rxy + WORD * (r8)]
+
+        mov word[circles_rxy + WORD * (rax)], cx  ; circles_rxy[i][j] (word)
     
-    mov byte[j], 0
-    boucle_rand__add_cricle:
-        
-        movzx rax, byte[i]
-        mov rbx, COLUMN_CIRCLES
-        mul rbx             ; rax = i * COLUMN_CIRCLES
-        movzx rbx, byte[j]  ; rbx = j
-        add rax, rbx        ; rax = i * COLUMN_CIRCLES + j
-
-        mov cx, word[tmp_circle_rxy + WORD * rbx]  ; cx = tmp_circle[j][i]
-        
-        mov word[circles_rxy + WORD * rax], cx   ; On stock le nb aleatoire dans circles[i][j]
-
-; ///////////////////////////
-mov rdi, int_msg
-movzx rsi, word[tmp_circle_rxy + WORD * rbx]
-movzx rdx, word[circles_rxy + WORD * rax]
-movzx rcx, byte[test]
-mov rax, 0
-call printf
-; //////////////////////////
-
     inc byte[j]
     cmp byte[j], COLUMN_CIRCLES
-    jne boucle_rand__add_cricle
+    jne boucle_init_cercle
 
     ;=====================================
 
 inc byte[i]
 cmp byte[i], NB_CERCLES
-jne boucle_rand
-
-; ///////////////////////////
-mov rdi, msg_end
-mov rax, 0
-call printf
-; ///////////////////////////
+jne boucle_cercle
 
 
 ;###############################
@@ -300,38 +239,28 @@ je closeDisplay						; on saute au label 'closeDisplay' qui ferme la fenêtre
 
 dessin:
 
-    mov rdi, msg_aled
-    mov rax, 0
-    call printf
-
 mov byte[i], 0
 boucle_dessin:
 
     ; mul utilise rdx:rax
     movzx rax, byte[i]
     mov rbx, COLUMN_CIRCLES
-    mul rbx             ; rax = i * COLUMN_CIRCLES
+    mul rbx
+    ; rax = i * COLUMN_CIRCLES
 
     mov rdi, qword[display_name]
     mov rsi, qword[window]
     mov rdx, qword[gc]
-    
-    mov cx, word[circles_rxy + WORD * (rax + 0)]  ; circles_rxy[i][0] : RAYON du CERCLE (word)
-    mov r8w, word[circles_rxy + WORD * (rax + 1)] ; circles_rxy[i][1] : COORDONNEE en X DU CERCLE (word)
-    mov r9w, word[circles_rxy + WORD * (rax + 2)] ; circles_rxy[i][2] : COORDONNEE en Y DU CERCLE (word)
-    
+
+    mov cx,  word[circles_rxy + WORD * (rax + 0)]   ; circles_rxy[i][0] : RAYON du CERCLE (word)
+    mov r8w, word[circles_rxy + WORD * (rax + 1)]   ; circles_rxy[i][1] : COORDONNEE en X DU CERCLE (word)
+    mov r9w, word[circles_rxy + WORD * (rax + 2)]   ; circles_rxy[i][2] : COORDONNEE en Y DU CERCLE (word)
+
     push 0xFFFFFF   ; COULEUR du crayon en hexa (dword mais en vrai -> 3 octets : 0xRRGGBB)
     
     call draw_circle
 
-; ///////////////////////////
-mov rdi, int_msg
-movzx rsi, word[circles_rxy + WORD * (rax + 1)]
-movzx rdx, word[circles_rxy + WORD * (rax + 2)]
-movzx rcx, word[circles_rxy + WORD * (rax + 0)]
-mov rax, 0
-call printf
-; //////////////////////////
+    pop rdi ; Pour nettoyer la pile (-> 0xFFFFFF)
 
 inc byte[i]
 cmp byte[i], NB_CERCLES

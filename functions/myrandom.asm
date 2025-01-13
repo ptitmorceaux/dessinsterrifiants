@@ -33,12 +33,6 @@ extern printf, scanf, rand, srand, time
 
 ;===============================================================
 
-section .data
-    nb_printf:      db  "Nombre = %d", 10, 0
-    random_errmsg:  db  "non", 10, 0
-
-;===============================================================
-
 section .text
 global random_number
 random_number:
@@ -51,7 +45,7 @@ random_number:
     ; Maximum (di)
 
     cmp di, 0
-    jle random_number__error
+    je zero
 
     ;=====================================
 
@@ -76,11 +70,8 @@ random_number:
 
     ;=====================================
 
-    random_number__error:
-    mov rdi, random_errmsg
-    mov rax, 0
-    call printf
-    mov rax, 0  ; on renvoie 0 en cas d'erreur
+    zero:
+    mov rax, 0  ; on renvoie 0
 
     ;=====================================
 

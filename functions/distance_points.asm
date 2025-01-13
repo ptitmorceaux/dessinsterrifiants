@@ -1,6 +1,6 @@
 ;===============================================================
 
-                    ; Fonction calc_points ;
+                    ; Fonction distance_points ;
 
 ;===============================================================
 
@@ -58,7 +58,7 @@ distance_points:
 
     ;=====================================
     
-    cvtsi2sd xmm0, rdi  ; Convertire l'entier en double car sqrt attend un float
+    cvtsi2sd xmm0, rdi  ; Convertie l'entier en double car sqrt attend un float
 
     call sqrt           ; sqrt( (x1-y1)² + (x2-y2)² )
 
