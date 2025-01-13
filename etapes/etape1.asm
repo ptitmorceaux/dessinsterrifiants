@@ -260,6 +260,8 @@ boucle_dessin:
     
     call draw_circle
 
+    pop rdi ; Pour nettoyer la pile (-> 0xFFFFFF)
+
 inc byte[i]
 cmp byte[i], NB_CERCLES
 jne boucle_dessin
