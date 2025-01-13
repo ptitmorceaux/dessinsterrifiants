@@ -39,15 +39,14 @@ section .bss
 section .data
     event:		times	24 dq 0
 
-    msg_start:  db  "--- DEBUT ---", 10, 10, 0
-    msg_end:    db  "--- FIN ---", 10, 10, 0
-    int_msg:    db  "%d : %d // %d", 10, 10, 0
-    coord_msg:  db  "x:%d y:%d // %d", 10, 10, 0
-    msg_aled:   db  "ALED", 10, 10, 0
-    test_msg:   db  "TEST MSG : %d", 10, 0
+    palette:    dd  0xb8ff61, 0xb9e458, 0xbaca4f, 0xbbaf46, 0xbc943d, 0xbe7a33, 0xbf5f2a, 0xc04421, 0xc12a18, 0xc20f0f
 
-    palette:    dd  0x0ebeff, 0x29b0f7, 0x44a2ee, 0x5e95e6, 0x7987dd, 0x9479d5, 0xaf6bcc, 0xc95ec4, 0xe450bb, 0xff42b3
-
+    ; msg_start:  db  "--- DEBUT ---", 10, 10, 0
+    ; msg_end:    db  "--- FIN ---", 10, 10, 0
+    ; int_msg:    db  "%d : %d // %d", 10, 10, 0
+    ; coord_msg:  db  "x:%d y:%d // %d", 10, 10, 0
+    ; msg_aled:   db  "ALED", 10, 10, 0
+    ; test_msg:   db  "TEST MSG : %d", 10, 0
 
 ;##################################################
 

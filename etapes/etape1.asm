@@ -35,12 +35,12 @@ section .bss
 section .data
     event:		times	24 dq 0
 
-    msg_start:  db  "--- DEBUT ---", 10, 10, 0
-    msg_end:    db  "--- FIN ---", 10, 10, 0
-    int_msg:    db  "%d : %d // %d", 10, 10, 0
-    coord_msg:  db  "x:%d y:%d // %d", 10, 10, 0
-    msg_aled:   db  "ALED", 10, 10, 0
-    test_msg:   db  "TEST MSG : %d", 10, 0
+    ; msg_start:  db  "--- DEBUT ---", 10, 10, 0
+    ; msg_end:    db  "--- FIN ---", 10, 10, 0
+    ; int_msg:    db  "%d : %d // %d", 10, 10, 0
+    ; coord_msg:  db  "x:%d y:%d // %d", 10, 10, 0
+    ; msg_aled:   db  "ALED", 10, 10, 0
+    ; test_msg:   db  "TEST MSG : %d", 10, 0
 
 ;##################################################
 
