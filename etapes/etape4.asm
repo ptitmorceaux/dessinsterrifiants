@@ -18,6 +18,7 @@ extern distance_points
 %define MAX_RAYON (WIDTH / 2)
 
 %define LEN_PALETTE 10
+%define PALETTE_SUB 5
 
 ;##################################################
 
@@ -339,18 +340,17 @@ boucle_dessin:
         push rbx     ; mettre la couleur du tableau
         call draw_circle
 
-        
         pop rcx     ; enlever 0xFF0000
         pop rax     ; Save rax
         pop rcx     ; recupere le rayon cx
 
         inc word[j]
-        cmp word[j], LEN_PALETTE    
-        jb len_palette_unreached 
-        mov word[j], 0        
+        cmp word[j], LEN_PALETTE
+        jb len_palette_unreached
+        mov word[j], 0
         len_palette_unreached:
     
-    sub cx, 1
+    sub cx, PALETTE_SUB
     cmp cx, 0
     jg boucle_cercle_concentrique
 

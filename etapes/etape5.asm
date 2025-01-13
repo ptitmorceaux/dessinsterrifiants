@@ -21,6 +21,7 @@ extern distance_points
 %define MAX_XY (WIDTH - 2 * DISTANCE_FENETRE_EXTERNE)
 
 %define LEN_PALETTE 10
+%define PALETTE_SUB 5
 
 ;##################################################
 
@@ -43,7 +44,7 @@ section .bss
 section .data
     event:		times	24 dq 0
 
-    palette:    dd  0xb8ff61, 0xb9e458, 0xbaca4f, 0xbbaf46, 0xbc943d, 0xbe7a33, 0xbf5f2a, 0xc04421, 0xc12a18, 0xc20f0f
+    palette:    dd  0xcbf499, 0xb4d988, 0x9ebe77, 0x87a366, 0x718855, 0x5a6c44, 0x445133, 0x2d3622, 0x171b11, 0x000000
 
     ; msg_start:  db  "--- DEBUT ---", 10, 10, 0
     ; msg_end:    db  "--- FIN ---", 10, 10, 0
@@ -392,19 +393,18 @@ boucle_dessin:
         mov ebx, dword[palette + DWORD * rbx]
         push rbx     ; mettre la couleur du tableau
         call draw_circle
-
         
         pop rcx     ; enlever 0xFF0000
         pop rax     ; Save rax
         pop rcx     ; recupere le rayon cx
 
         inc word[j]
-        cmp word[j], LEN_PALETTE    
-        jb len_palette_unreached 
-        mov word[j], 0        
+        cmp word[j], LEN_PALETTE
+        jb len_palette_unreached
+        mov word[j], 0
         len_palette_unreached:
     
-    sub cx, 1
+    sub cx, PALETTE_SUB
     cmp cx, 0
     jg boucle_cercle_concentrique
 
