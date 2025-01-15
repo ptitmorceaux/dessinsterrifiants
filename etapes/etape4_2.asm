@@ -18,7 +18,7 @@ extern distance_points
 
 %define DISTANCE_FENETRE_EXTERNE 50
 %define RAYON_EXTERN (WIDTH - 2 * DISTANCE_FENETRE_EXTERNE) / 2
-%define MAX_XY (WIDTH - 2 * DISTANCE_FENETRE_EXTERNE)
+
 
 %define LEN_PALETTE 10
 %define PALETTE_SUB 5
@@ -90,15 +90,15 @@ boucle_cercle:
 
     cercle_est_en_collision:
 
-    mov word[j], 0
+     mov byte[j], 0
     boucle_random:
 
         ; Si on défini le rayon -> tmp[0] : le max est different de x et y
-        cmp word[j], 0
+        cmp byte[j], 0
         jne boucle_rand__xy
 
         ; Si on défini le rayon d'un cercle init ou non
-        cmp word[i], NB_CERCLES_INIT
+        cmp byte[i], NB_CERCLES_INIT
         jb boucle_rand__rayon_init
 
         ; rayon d'un cercle pas init : pas de random
@@ -112,25 +112,20 @@ boucle_cercle:
 
         ; Pour x et y (voir calcul etape 3)
         boucle_rand__xy:
-        mov di, MAX_XY  ; Maximum pour x et y
+        mov di, WIDTH  ; Maximum pour x et y
 
         boucle_rand_calcul:
         call random_number
         ; ax = random_number
 
-        ; Si on définie le rayon alors on n'applique aucun changement sur le nombre aleatoire
-        cmp word[j], 0
-        je def_tmp
-        ; Sinon, pour x et y, on rajoute DISTANCE_FENETRE_EXTERNE (voir calcul etape 3)
-        add ax, DISTANCE_FENETRE_EXTERNE
-
         def_tmp:
-        movzx rcx, word[j] ; rcx = j
+        movzx rcx, byte[j] ; rcx = j
         mov word[tmp_circle_rxy + WORD * (rcx)], ax ; tmp[j] (word)
 
-    inc word[j]
-    cmp word[j], COLUMN_CIRCLES
+    inc byte[j]
+    cmp byte[j], COLUMN_CIRCLES
     jne boucle_random
+
 
     ;=====================================
 
