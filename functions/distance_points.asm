@@ -62,7 +62,7 @@ distance_points:
 
     call sqrt           ; sqrt( (x1-y1)² + (x2-y2)² )
 
-    cvttsd2si rdi, xmm0 ; Convertie le résultat en entier arrondi
+    cvtsd2si rdi, xmm0 ; Convertie le résultat en entier arrondi
 
     ;=====================================
 
