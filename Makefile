@@ -13,7 +13,6 @@ FUNCTIONS_OBJECTS := $(FUNCTIONS_SOURCES:.asm=.o)
 
 # Règle principale : compiler toutes les étapes
 all: etape1 etape2 etape3 etape4_1 etape4_2
-	clear && \
 	echo "Les exécutables des étapes sont dans $(OUTPUT_DIR)/"
 
 # Fonction pour assembler un fichier et ses dépendances
@@ -42,7 +41,6 @@ etape1: $(ETAPES_DIR)/etape1.asm $(FUNCTIONS_SOURCES)
 	make assemble file=etape1
 	gcc $(ETAPES_DIR)/etape1.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape1.out $(GCC_FLAGS)
 	rm -f $(ETAPES_DIR)/etape1.o $(FUNCTIONS_OBJECTS) && \
-	clear && \
 	echo "$(OUTPUT_DIR)/etape1.out a été crée"
 
 etape2: $(ETAPES_DIR)/etape2.asm $(FUNCTIONS_SOURCES)
@@ -50,7 +48,6 @@ etape2: $(ETAPES_DIR)/etape2.asm $(FUNCTIONS_SOURCES)
 	make assemble file=etape2
 	gcc $(ETAPES_DIR)/etape2.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape2.out $(GCC_FLAGS)
 	rm -f $(ETAPES_DIR)/etape2.o $(FUNCTIONS_OBJECTS) && \
-	clear && \
 	echo "$(OUTPUT_DIR)/etape2.out a été crée"
 
 etape3: $(ETAPES_DIR)/etape3.asm $(FUNCTIONS_SOURCES)
@@ -58,7 +55,6 @@ etape3: $(ETAPES_DIR)/etape3.asm $(FUNCTIONS_SOURCES)
 	make assemble file=etape3
 	gcc $(ETAPES_DIR)/etape3.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape3.out $(GCC_FLAGS)
 	rm -f $(ETAPES_DIR)/etape3.o $(FUNCTIONS_OBJECTS) && \
-	clear && \
 	echo "$(OUTPUT_DIR)/etape3.out a été crée"
 
 etape4_1: $(ETAPES_DIR)/etape4_1.asm $(FUNCTIONS_SOURCES)
@@ -66,7 +62,6 @@ etape4_1: $(ETAPES_DIR)/etape4_1.asm $(FUNCTIONS_SOURCES)
 	make assemble file=etape4_1
 	gcc $(ETAPES_DIR)/etape4_1.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape4_1.out $(GCC_FLAGS)
 	rm -f $(ETAPES_DIR)/etape4_1.o $(FUNCTIONS_OBJECTS) && \
-	clear && \
 	echo "$(OUTPUT_DIR)/etape4_1.out a été crée"
 
 etape4_2: $(ETAPES_DIR)/etape4_2.asm $(FUNCTIONS_SOURCES)
@@ -74,7 +69,6 @@ etape4_2: $(ETAPES_DIR)/etape4_2.asm $(FUNCTIONS_SOURCES)
 	make assemble file=etape4_2
 	gcc $(ETAPES_DIR)/etape4_2.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape4_2.out $(GCC_FLAGS)
 	rm -f $(ETAPES_DIR)/etape4_2.o $(FUNCTIONS_OBJECTS) && \
-	clear && \
 	echo "$(OUTPUT_DIR)/etape4_2.out a été crée"
 
 # Nettoyage
@@ -82,14 +76,12 @@ clean:
 	echo "Suppression des exécutables"
 	rm -f */*.out && \
 	rm -f $(OUTPUT_DIR)/ && \
-	clear && \
 	echo "Les exécutables ont été supprimés"
 
 fclean: clean
 	make clean
 	echo "Suppression des fichiers objets"
 	rm -f */*.o && \
-	clear && \
 	echo "Les fichiers exécutables et objects ont été supprimés"
 
 re: clean fclean all
