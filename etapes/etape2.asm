@@ -263,13 +263,13 @@ mov rbx,rax
 
 mov rdi,qword[display_name]
 mov rsi,rbx
-mov rdx,10
-mov rcx,10
+mov rdx,0;10    ; position x
+mov rcx,0;10    ; position y
 mov r8,WIDTH	; largeur
 mov r9,HEIGHT	; hauteur
 push 0x000000	; background  0xRRGGBB
-push 0x00FF00
-push 1
+push 0x00FF00   ; border color
+push 0;1        ; border width
 call XCreateSimpleWindow
 add rsp, 24     ; Nettoyer la pile (3 push x 8 octets)
 mov qword[window],rax
