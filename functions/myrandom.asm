@@ -40,6 +40,8 @@ random_number:
     push rbp
     mov rbp, rsp
 
+    movzx rdi, di
+
     ;=====================================
 
     ; Maximum (di)
