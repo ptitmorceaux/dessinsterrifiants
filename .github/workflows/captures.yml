@@ -37,21 +37,8 @@ jobs:
 
           for etape in $LISTE_ETAPES; do
             echo "--- Lancement de $etape.out sur écran virtuel... ---"
-            
-            # Lance le programme .out sur un écran virtuel en arrière-plan
-            xvfb-run --auto-servernum ./output/$etape.out &
-            XVFB_PID=$! # Récupère le PID du processus
-            
-            echo "Attente de 10 secondes pour le dessin..."
-            sleep 10
-            
-            echo "Capture de output/screenshots/$etape.png..."
-            # 'import' (d'imagemagick) prend une capture de l'écran
-            import -window root output/screenshots/$etape.png
-            
-            echo "Arrêt du processus $etape.out..."
-            kill $XVFB_PID # Arrête le programme
-            sleep 1
+            xvfb-run --auto-servernum sh -c "./output/$etape.out & sleep 10; import -window root output/screenshots/$etape.png"
+            # No need to manage DISPLAY or kill Xvfb manually
           done
 
       - name: 5. ⬆️ Publier les captures (Artifact)
