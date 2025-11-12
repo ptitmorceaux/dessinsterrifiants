@@ -40,48 +40,48 @@ etape1: $(ETAPES_DIR)/etape1.asm $(FUNCTIONS_SOURCES)
 	mkdir -p $(OUTPUT_DIR)
 	make assemble file=etape1
 	gcc $(ETAPES_DIR)/etape1.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape1.out $(GCC_FLAGS)
-	rm -f $(ETAPES_DIR)/etape1.o $(FUNCTIONS_OBJECTS) && \
+	rm -rf $(ETAPES_DIR)/etape1.o $(FUNCTIONS_OBJECTS) && \
 	echo "$(OUTPUT_DIR)/etape1.out a été crée"
 
 etape2: $(ETAPES_DIR)/etape2.asm $(FUNCTIONS_SOURCES)
 	mkdir -p $(OUTPUT_DIR)
 	make assemble file=etape2
 	gcc $(ETAPES_DIR)/etape2.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape2.out $(GCC_FLAGS)
-	rm -f $(ETAPES_DIR)/etape2.o $(FUNCTIONS_OBJECTS) && \
+	rm -rf $(ETAPES_DIR)/etape2.o $(FUNCTIONS_OBJECTS) && \
 	echo "$(OUTPUT_DIR)/etape2.out a été crée"
 
 etape3: $(ETAPES_DIR)/etape3.asm $(FUNCTIONS_SOURCES)
 	mkdir -p $(OUTPUT_DIR)
 	make assemble file=etape3
 	gcc $(ETAPES_DIR)/etape3.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape3.out $(GCC_FLAGS)
-	rm -f $(ETAPES_DIR)/etape3.o $(FUNCTIONS_OBJECTS) && \
+	rm -rf $(ETAPES_DIR)/etape3.o $(FUNCTIONS_OBJECTS) && \
 	echo "$(OUTPUT_DIR)/etape3.out a été crée"
 
 etape4_1: $(ETAPES_DIR)/etape4_1.asm $(FUNCTIONS_SOURCES)
 	mkdir -p $(OUTPUT_DIR)
 	make assemble file=etape4_1
 	gcc $(ETAPES_DIR)/etape4_1.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape4_1.out $(GCC_FLAGS)
-	rm -f $(ETAPES_DIR)/etape4_1.o $(FUNCTIONS_OBJECTS) && \
+	rm -rf $(ETAPES_DIR)/etape4_1.o $(FUNCTIONS_OBJECTS) && \
 	echo "$(OUTPUT_DIR)/etape4_1.out a été crée"
 
 etape4_2: $(ETAPES_DIR)/etape4_2.asm $(FUNCTIONS_SOURCES)
 	mkdir -p $(OUTPUT_DIR)
 	make assemble file=etape4_2
 	gcc $(ETAPES_DIR)/etape4_2.o $(FUNCTIONS_OBJECTS) -o $(OUTPUT_DIR)/etape4_2.out $(GCC_FLAGS)
-	rm -f $(ETAPES_DIR)/etape4_2.o $(FUNCTIONS_OBJECTS) && \
+	rm -rf $(ETAPES_DIR)/etape4_2.o $(FUNCTIONS_OBJECTS) && \
 	echo "$(OUTPUT_DIR)/etape4_2.out a été crée"
 
 # Nettoyage
 clean:
 	echo "Suppression des exécutables"
-	rm -f */*.out && \
-	rm -f $(OUTPUT_DIR)/ && \
+	rm -rf */*.out && \
+	rm -rf $(OUTPUT_DIR)/ && \
 	echo "Les exécutables ont été supprimés"
 
 fclean: clean
 	make clean
 	echo "Suppression des fichiers objets"
-	rm -f */*.o && \
+	rm -rf */*.o && \
 	echo "Les fichiers exécutables et objects ont été supprimés"
 
 re: clean fclean all

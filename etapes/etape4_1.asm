@@ -62,6 +62,11 @@ main:
 ; Mettez ici votre code qui devra s'exécuter avant le dessin
 ;###########################################################
 
+; Aligner la pile sur 16 octets pour les appels de fonctions
+push rbp
+mov rbp, rsp
+and rsp, -16  ; Aligne RSP sur 16 octets
+
 mov word[i], 0
 boucle_cercle:
 
@@ -271,6 +276,7 @@ push 0x000000	; background  0xRRGGBB
 push 0x00FF00
 push 1
 call XCreateSimpleWindow
+add rsp, 24     ; Nettoyer la pile (3 push x 8 octets)
 mov qword[window],rax
 
 mov rdi,qword[display_name]
@@ -282,6 +288,7 @@ mov rdi,qword[display_name]
 mov rsi,qword[window]
 call XMapWindow
 
+mov rdi,qword[display_name]  ; display_name doit être en RDI
 mov rsi,qword[window]
 mov rdx,0
 mov rcx,0
@@ -340,10 +347,12 @@ boucle_dessin:
 
         movzx rbx, word[j]
         mov ebx, dword[palette + DWORD * rbx]
+        
+        sub rsp, 8   ; Aligner la pile avant le push (pour avoir un total impair de 8 octets)
         push rbx     ; mettre la couleur du tableau
         call draw_circle
+        add rsp, 16  ; Nettoyer l'argument + l'alignement (1 push + 1 sub = 16 octets)
 
-        pop rcx ; enlever 0xFF0000 (on veut juste vider le haut de la pile)
         pop rdx ; recupere BOOL inc (0) OR dec (1)
         pop rax ; recupere (i * COLUMN_CIRCLES)
         pop rcx ; recupere le rayon cx

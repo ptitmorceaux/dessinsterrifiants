@@ -57,6 +57,11 @@ main:
 ; Mettez ici votre code qui devra s'exécuter avant le dessin
 ;###########################################################
 
+; Aligner la pile sur 16 octets pour les appels de fonctions
+push rbp
+mov rbp, rsp
+and rsp, -16  ; Aligne RSP sur 16 octets
+
 mov word[i], 0
 boucle_cercle:
 
@@ -266,6 +271,7 @@ push 0x000000	; background  0xRRGGBB
 push 0x00FF00
 push 1
 call XCreateSimpleWindow
+add rsp, 24     ; Nettoyer la pile (3 push x 8 octets)
 mov qword[window],rax
 
 mov rdi,qword[display_name]
@@ -277,6 +283,7 @@ mov rdi,qword[display_name]
 mov rsi,qword[window]
 call XMapWindow
 
+mov rdi,qword[display_name]  ; display_name doit être en RDI
 mov rsi,qword[window]
 mov rdx,0
 mov rcx,0

@@ -61,6 +61,7 @@ draw_circle:
     ; Début de la fonction
     push rbp
     mov rbp, rsp
+    sub rsp, 16  ; Aligner la pile sur 16 octets et réserver de l'espace
 
     ;=====================================
 
@@ -95,8 +96,8 @@ draw_circle:
 
     mov bx, word[coord_y]	; COORDONNEE en Y DU CERCLE
 
-    mov r15w, word[rayon]	; RAYON DU CERCLE
-    sub bx, r15w
+    mov r10w, word[rayon]	; RAYON DU CERCLE
+    sub bx, r10w
     movzx r8, bx		
     mov r9w, word[rayon]	; RAYON DU CERCLE
     shl r9, 1
@@ -105,12 +106,12 @@ draw_circle:
     push 0
     push r9
     call XDrawArc
+    add rsp, 24     ; Nettoyer la pile (3 push x 8 octets)
 
     ;=====================================
 
     ; Fin de la fonction
-    mov rsp, rbp
-    pop rbp
+    leave  ; Équivalent à: mov rsp, rbp; pop rbp
     ret
 
 ;===============================================================
